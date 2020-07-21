@@ -16,13 +16,23 @@ view: orders {
     allowed_value: { value: "Month" }
     default_value: "Month"
   }
-  dimension: dynamic_timeframe {
+  dimension: dynamic_timeframe_hidden {
     type: string
     sql:
     CASE
     WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
     WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
     WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month}
+    END ;;
+  }
+
+  dimension: dynamic_timeframe {
+    type: string
+    sql:
+    CASE
+    WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
+    WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
+    WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month_name}
     END ;;
   }
   dimension_group: created {
