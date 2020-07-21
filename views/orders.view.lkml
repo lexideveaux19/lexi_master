@@ -16,25 +16,36 @@ view: orders {
     allowed_value: { value: "Month" }
     default_value: "Month"
   }
-  dimension: dynamic_timeframe_hidden {
-    type: string
+  dimension: dynamic_timeframe {
+    type: date
     sql:
     CASE
     WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
     WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
     WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month}
     END ;;
+    html: {% if timeframe_picker._parameter_value == "'Month'" %}
+          {{ created_month_name._value }}
+          {% else %}
+          {{rendered_value}}
+          {% endif %}
+          ;;
   }
+#  dimension: dynamic_timeframe_test {
+#     type: string
+#     sql:
+#     CASE
+#     WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
+#     WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
+#     WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month_name}
+#     END ;;
+# }
 
-  dimension: dynamic_timeframe {
-    type: string
-    sql:
-    CASE
-    WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
-    WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
-    WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month_name}
-    END ;;
-  }
+dimension: created_month {
+  type: date
+  group_label: "Created Date"
+  sql: concat((DATE_FORMAT(${TABLE}.created_at, '%Y-%m')), '-01');;
+}
   dimension_group: created {
     type: time
     timeframes: [
@@ -42,7 +53,6 @@ view: orders {
       time,
       date,
       week,
-      month,
       quarter,
       year,
       month_name
