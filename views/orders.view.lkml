@@ -8,6 +8,23 @@ view: orders {
     sql: ${TABLE}.id ;;
   }
 
+  parameter: timeframe_picker {
+    label: "Date Granularity"
+    type: string
+    allowed_value: { value: "Date" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+    default_value: "Month"
+  }
+  dimension: dynamic_timeframe {
+    type: string
+    sql:
+    CASE
+    WHEN {% parameter timeframe_picker %} = 'Date' THEN ${orders.created_date}
+    WHEN {% parameter timeframe_picker %} = 'Week' THEN ${orders.created_week}
+    WHEN{% parameter timeframe_picker %} = 'Month' THEN ${orders.created_month}
+    END ;;
+  }
   dimension_group: created {
     type: time
     timeframes: [
