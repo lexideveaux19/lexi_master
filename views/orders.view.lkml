@@ -60,6 +60,11 @@ dimension: created_month {
     sql: ${TABLE}.created_at ;;
   }
 
+  dimension: created_one_day {
+    type: date
+    sql:DATE_ADD(${created_date}, INTERVAL 1 day);;
+  }
+
   dimension: status {
     type: string
     sql: ${TABLE}.status ;;
