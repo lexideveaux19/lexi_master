@@ -11,7 +11,9 @@ datagroup: lexi_bug_testing_default_datagroup {
 persist_with: lexi_bug_testing_default_datagroup
 
 
-explore: companies {}
+explore: companies {
+  sql_always_where: ${companies.founded_date} >= '2007-01-01'  ;;
+}
 
 explore: events {
   join: users {

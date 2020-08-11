@@ -5,9 +5,8 @@ view: companies {
     type: unquoted
     ### default_value can only be a string
     ### filter suggestions uses the default value
-    default_value: "crunchbase"
+#     default_value: "crunchbase"
   allowed_value: {
-
     label: "crunchbase"
     value: "crunchbase"
 
@@ -16,7 +15,6 @@ view: companies {
 
     label: "crunchbase4"
     value: "crunchbase4"
-
   }
   }
 
