@@ -112,6 +112,7 @@ view: companies {
     sql: ${TABLE}.twitter_username ;;
   }
 
+
   dimension_group: updated {
     type: time
     timeframes: [
