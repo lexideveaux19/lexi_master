@@ -9,12 +9,15 @@ view: order_items {
   }
 
   dimension: inventory_item_id {
+    group_label: "test"
+    group_item_label: ""
     type: number
     # hidden: yes
     sql: ${TABLE}.inventory_item_id ;;
   }
 
   dimension: order_id {
+    group_label: "test"
     type: number
     # hidden: yes
     sql: ${TABLE}.order_id ;;
@@ -38,6 +41,7 @@ view: order_items {
     type: number
     sql: ${TABLE}.sale_price ;;
   }
+
 
   measure: count {
     type: count

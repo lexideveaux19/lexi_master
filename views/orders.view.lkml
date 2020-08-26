@@ -54,10 +54,28 @@ dimension: created_month {
       date,
       week,
       quarter,
+      fiscal_year,
       year,
       month_name
     ]
     sql: ${TABLE}.created_at ;;
+  }
+  filter: status_filter {
+    type: string
+    suggest_dimension: status
+  }
+
+  dimension: status_satisfies_filter {
+    type: yesno
+    hidden: yes
+    sql: {% condition status_filter %} ${status} {% endcondition %} ;;
+  }
+  measure: count_dynamic_status {
+    type: count
+    filters: {
+      field: status_satisfies_filter
+      value: "yes"
+    }
   }
 
   dimension: created_one_day {
@@ -68,6 +86,10 @@ dimension: created_month {
   dimension: status {
     type: string
     sql: ${TABLE}.status ;;
+    link: {
+      label: "Drill Dashboard"
+      url: "/dashboards/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"
+    }
   }
 
   dimension: user_id {
