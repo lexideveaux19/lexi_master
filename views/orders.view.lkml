@@ -90,6 +90,10 @@ dimension: created_month {
       label: "Drill Dashboard"
       url: "/dashboards/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"
     }
+    link: {
+      label: "Drill Explore"
+      url:"/explore/lexi_bug_testing/order_items?fields=orders.status,users.age&f[orders.status]={{ value }}&f[orders.created_date]={{ _filters['orders.created_date'] | url_encode }}"
+    }
   }
 
   dimension: user_id {
