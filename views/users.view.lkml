@@ -11,6 +11,14 @@ view: users {
   dimension: age {
     type: number
     sql: ${TABLE}.age ;;
+    html:
+    {% if value >0 and value <20 %}
+    <p style="color: red; font-size: 80%">{{ rendered_value }}</p>
+    {% elsif value >1000 %}
+    <p style="color: blue; font-size:80%">{{ rendered_value }}</p>
+    {% else %}
+    <p style="color: black; font-size:100%">{{ rendered_value }}</p>
+    {% endif %};;
   }
 
   dimension: city {
@@ -41,6 +49,7 @@ view: users {
   dimension: email {
     type: string
     sql: ${TABLE}.email ;;
+    html:<p style="font-size: 100%"; "font-family:'Times New Roman'">{{rendered_value}};;
   }
 
   dimension: first_name {
