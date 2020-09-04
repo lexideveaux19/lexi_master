@@ -15,6 +15,20 @@ explore: companies {
   sql_always_where: ${companies.founded_date} >= '2007-01-01'  ;;
 }
 
+explore: order_items_liquid_2 {
+  view_name: order_items
+  join: orders {
+    relationship: many_to_one
+    sql_on:
+    {% if _user_attributes['lex_dynamic_sql']=="Yes" %}
+      ${orders.id} = ${order_items.order_id}
+      {% else %}
+      ${orders.created_raw} = ${order_items.returned_raw}
+      {% endif %}
+       ;;
+  }
+}
+
 explore: events {
   # hidden: yes
   join: users {

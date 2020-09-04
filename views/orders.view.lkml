@@ -72,10 +72,10 @@ dimension: created_month {
   }
   measure: count_dynamic_status {
     type: count
-    # filters: {
-    #   field: status_satisfies_filter
-    #   value: "yes"
-    # }
+    filters: {
+      field: status_satisfies_filter
+      value: "yes"
+    }
   }
 
   dimension: created_one_day {
