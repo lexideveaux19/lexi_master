@@ -23,6 +23,7 @@ explore: events {
     relationship: many_to_one
   }
 }
+
 explore: derived_table {}
 
 explore: inventory_items {
