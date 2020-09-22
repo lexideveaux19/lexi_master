@@ -21,6 +21,7 @@ view: order_items {
     type: number
     # hidden: yes
     sql: ${TABLE}.order_id ;;
+
   }
 
   dimension_group: returned {

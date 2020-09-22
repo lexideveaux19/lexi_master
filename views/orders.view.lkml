@@ -55,11 +55,19 @@ dimension: created_month {
       week,
       quarter,
       fiscal_year,
+      day_of_week,
+      time_of_day,
       year,
       month_name
     ]
     sql: ${TABLE}.created_at ;;
   }
+  dimension: time_of_day_number{
+    type: number
+    sql: cast(${created_time_of_day} as decimal(4,2)) ;;
+    value_format_name: decimal_2
+  }
+
   filter: status_filter {
     type: string
     suggest_dimension: status
@@ -108,6 +116,11 @@ dimension: created_month {
 
   measure: count {
     type: count
+    link: {
+      label: "Drill Dashboard"
+      url: "/dashboards/4304"
+    }
     drill_fields: [id, users.last_name, users.id, users.first_name, order_items.count]
   }
+
 }

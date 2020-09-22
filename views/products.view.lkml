@@ -9,11 +9,16 @@ view: products {
   }
 
   dimension: brand {
+    group_label: "Test"
+    group_item_label: "Bran"
+    label: "Test Bran"
     type: string
     sql: ${TABLE}.brand ;;
   }
 
   dimension: category {
+    group_label: "Test"
+    group_item_label: "Cat"
     type: string
     sql: ${TABLE}.category ;;
   }
@@ -21,6 +26,12 @@ view: products {
   dimension: department {
     type: string
     sql: ${TABLE}.department ;;
+  }
+
+  filter: department_filter {
+    type: string
+    suggest_dimension: products.department
+    sql: {% condition department_filter %} ${department} {% endcondition %} ;;
   }
 
   dimension: item_name {
