@@ -21,6 +21,7 @@ view: products {
     group_item_label: "Cat"
     type: string
     sql: ${TABLE}.category ;;
+    drill_fields: [rank]
   }
 
   dimension: department {

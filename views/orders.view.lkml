@@ -8,6 +8,25 @@ view: orders {
     sql: ${TABLE}.id ;;
   }
 
+dimension_group: duration {
+label: "24-hour days duration"
+type: duration
+sql_start: ${created_date};;
+sql_end: coalesce(${order_items.returned_date}, now()) ;;
+intervals: [hour]
+}
+
+dimension: duration_8 {
+  label: "business day hours"
+  sql:  concat(round((${hours_duration}/24)*8,1), " hours") ;;
+  value_format: "string"
+}
+
+measure: count_month {
+  type: sum
+  sql: case when ${created_month} IS NOT NULL then 1 else 0 end ;;
+}
+
   parameter: timeframe_picker {
     label: "Date Granularity"
     type: string
@@ -47,6 +66,10 @@ dimension: created_month {
   sql: concat((DATE_FORMAT(${TABLE}.created_at, '%Y-%m')), '-01');;
 }
   dimension_group: created {
+    group_label: "Case Times"
+    group_item_label: "DOS"
+    label: "DOS"
+    description: "Date of Service"
     type: time
     timeframes: [
       raw,
@@ -70,7 +93,9 @@ dimension: created_month {
 
   filter: status_filter {
     type: string
-    suggest_dimension: status
+    suggest_dimension: orders.status
+    default_value: "-cancelled"
+     sql: {% condition status_filter %} ${status} {% endcondition %} ;;
   }
 
   dimension: status_satisfies_filter {
@@ -94,9 +119,18 @@ dimension: created_month {
   dimension: status {
     type: string
     sql: ${TABLE}.status ;;
+    html: {% if value == 'cancelled' %}
+    <div class="vis-single-value"  style="margin:0; padding:0; border-radius:0; color: black; background-color: lightblue; text-align:center">{{ rendered_value }}</div>
+    {% elsif value == 'complete' %}
+    <div style="color: black; background-color: lightgreen; font-size:100%; text-align:center">{{ rendered_value }}</div>
+    {% else %}
+    <div style="color: black; background-color: orange; font-size:100%; text-align:center">{{ rendered_value }}</div>
+    {% endif %}
+    ;;
+
     link: {
       label: "Drill Dashboard"
-      url: "/dashboards/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"
+      url: "/dashboards-next/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"
     }
     link: {
       label: "Drill Explore"
@@ -115,12 +149,20 @@ dimension: created_month {
   }
 
   measure: count {
+    # view_label: ""
     type: count
+    # filters: [status: "-NULL"]
+    link: {
+      label: "drill count"
+      url: "{{link}}"
+    }
     link: {
       label: "Drill Dashboard"
       url: "/dashboards/4304"
     }
-    drill_fields: [id, users.last_name, users.id, users.first_name, order_items.count]
+    drill_fields: [drill_test*]
   }
-
+set: drill_test {
+  fields: [id, users.last_name, users.id, users.first_name, order_items.count]
+}
 }

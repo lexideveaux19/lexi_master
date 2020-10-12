@@ -9,13 +9,17 @@ datagroup: lexi_bug_testing_default_datagroup {
 }
 
 persist_with: lexi_bug_testing_default_datagroup
-explore: ndt {
-  join: orders {
-    type: left_outer
-  sql_on: ${orders.user_id}=${ndt.user_id} ;;
-  relationship: many_to_one
-  }
-}
+
+# explore: ndt {
+  # join: orders {
+  #   type: left_outer
+  # sql_on: ${orders.user_id}=${ndt.user_id} ;;
+  # relationship: many_to_one
+  # }
+
+explore: sql_runner_query {}
+
+explore: flights {}
 explore: test {}
 explore: companies {
   sql_always_where: ${companies.founded_date} >= '2007-01-01'  ;;
@@ -53,24 +57,27 @@ explore: inventory_items {
     relationship: many_to_one
   }
 }
-explore: order_items_2{
-  from: order_items
-  join: orders {
-    # view_label: ""
-    type: left_outer
-    sql_on: ${order_items_2.order_id} = ${orders.id} ;;
-    # fields: [orders.id]
-    relationship: many_to_one
-  }
-  join: inventory_items {
-    type: left_outer
-    view_label: ""
-    sql_on: ${order_items_2.inventory_item_id} = ${inventory_items.id} ;;
-    fields: [inventory_items.id]
-    relationship: many_to_one
-  }
-}
+# explore: order_items_2{
+#   from: order_items
+#   join: orders {
+#     # view_label: ""
+#     type: left_outer
+#     sql_on: ${order_items_2.order_id} = ${orders.id} ;;
+#     # fields: [orders.id]
+#     relationship: many_to_one
+#   }
+#   join: inventory_items {
+#     type: left_outer
+#     view_label: ""
+#     sql_on: ${order_items_2.inventory_item_id} = ${inventory_items.id} ;;
+#     fields: [inventory_items.id]
+#     relationship: many_to_one
+#   }
+# }
 explore: order_items {
+  # always_filter: {
+  #   filters: [orders.status: "-cancelled"]
+  # }
   join: orders {
     type: left_outer
     sql_on: ${order_items.order_id} = ${orders.id} ;;
@@ -97,11 +104,6 @@ explore: order_items {
   }
 }
 
-explore: orders {
-  join: users {
-    type: left_outer
-    sql_on: ${orders.user_id} = ${users.id} ;;
-    relationship: many_to_one
-  }
-  }
+
+
   explore: users_sqldt{}

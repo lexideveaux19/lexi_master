@@ -10,6 +10,7 @@ view: users {
 
   dimension: age {
     type: number
+    # label: "hours"
     sql: ${TABLE}.age ;;
     html:
     {% if value >0 and value <20 %}
@@ -19,6 +20,12 @@ view: users {
     {% else %}
     <p style="color: black; font-size:100%">{{ rendered_value }}</p>
     {% endif %};;
+  }
+  dimension: age_tier {
+    type: tier
+    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80]
+    style:  integer
+    sql: ${age} ;;
   }
 
   dimension: city {
