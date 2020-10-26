@@ -1,7 +1,8 @@
 - dashboard: lookml_dash
   title: Lookml Dash
   layout: newspaper
-  preferred_viewer: dashboards-next
+#   preferred_viewer: dashboards-next
+  preferred_viewer: dashboards
   elements:
   - title: New Tile
     name: New Tile
