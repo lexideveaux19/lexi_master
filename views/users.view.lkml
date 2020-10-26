@@ -8,6 +8,23 @@ view: users {
     sql: ${TABLE}.id ;;
   }
 
+  filter: date_filter {
+    type: date
+    sql:  {% condition date_filter %} ${date_date} {% endcondition %}  ;;
+  }
+
+
+  dimension: date_date {
+    sql: cast( ${TABLE}.created_at as date) ;;
+    type: date
+  }
+
+
+measure: yes_no {
+  type: number
+  sql: case when ${gender}="m" and ${count}>700 then 1 else 0 end  ;;
+}
+
   dimension: age {
     type: number
     # label: "hours"
@@ -23,7 +40,7 @@ view: users {
   }
   dimension: age_tier {
     type: tier
-    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80]
+    tiers: [20, 30, 40, 50, 60, 70, 80]
     style:  integer
     sql: ${age} ;;
   }
@@ -50,8 +67,10 @@ view: users {
       quarter,
       year
     ]
-    sql: ${TABLE}.created_at ;;
+    sql:${TABLE}.created_at ;;
   }
+
+
 
   dimension: email {
     type: string
@@ -62,6 +81,8 @@ view: users {
   dimension: first_name {
     type: string
     sql: ${TABLE}.first_name ;;
+    # label: "{% if orders._in_query %} orders first name
+    # {% else %} reg first name {% endif %}"
   }
 
   dimension: gender {

@@ -66,10 +66,6 @@ dimension: created_month {
   sql: concat((DATE_FORMAT(${TABLE}.created_at, '%Y-%m')), '-01');;
 }
   dimension_group: created {
-    group_label: "Case Times"
-    group_item_label: "DOS"
-    label: "DOS"
-    description: "Date of Service"
     type: time
     timeframes: [
       raw,
@@ -116,7 +112,7 @@ dimension: created_month {
     sql:DATE_ADD(${created_date}, INTERVAL 1 day);;
   }
 
-  dimension: status {
+  dimension: status_with_links {
     type: string
     sql: ${TABLE}.status ;;
     html: {% if value == 'cancelled' %}
@@ -136,11 +132,14 @@ dimension: created_month {
       label: "Drill Explore"
       url:"/explore/lexi_bug_testing/order_items?fields=orders.status,users.age&f[orders.status]={{ value }}&f[orders.created_date]={{ _filters['orders.created_date'] | url_encode }}"
     }
-
     # html:
     # <a href="/dashboards/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"</a> ;;
-
   }
+
+  dimension: status{
+  type:string
+  sql:${TABLE}.status;;
+}
 
   dimension: user_id {
     type: number
@@ -149,9 +148,10 @@ dimension: created_month {
   }
 
   measure: count {
-    # view_label: ""
     type: count
     # filters: [status: "-NULL"]
+    label: "{% if orders.status._in_query %} Status Count {% else %} Regular Count {% endif %}"
+    # label: "status count"
     link: {
       label: "drill count"
       url: "{{link}}"
