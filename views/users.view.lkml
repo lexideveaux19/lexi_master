@@ -92,6 +92,7 @@ measure: yes_no {
 
   dimension: last_name {
     type: string
+  # label: "{{ users.gender._value }}"
     sql: ${TABLE}.last_name ;;
   }
 
@@ -109,6 +110,7 @@ measure: yes_no {
     type: count
     drill_fields: [detail*]
   }
+
 
   # ----- Sets of fields for drilling ------
   set: detail {

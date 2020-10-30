@@ -16,7 +16,7 @@ persist_with: lexi_bug_testing_default_datagroup
   # sql_on: ${orders.user_id}=${ndt.user_id} ;;
   # relationship: many_to_one
   # }
-
+explore: ndt_test {}
 explore: sql_runner_query {}
 
 explore: flights {}

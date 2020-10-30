@@ -44,6 +44,12 @@ view: order_items {
     sql: ${TABLE}.sale_price ;;
   }
 
+  measure: avg_unique_sale {
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    sql: ${sale_price} ;;
+    value_format_name: usd_0
+  }
 
   measure: count {
     type: count

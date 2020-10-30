@@ -27,6 +27,24 @@ view: inventory_items {
     sql: ${TABLE}.created_at ;;
   }
 
+  parameter: timeframe_picker {
+    label: "Date Granularity"
+    type: string
+    allowed_value: { value: "Date" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+    default_value: "Date"
+  }
+  dimension: dynamic_timeframe {
+    type: string
+    sql:
+    CASE
+    WHEN {% parameter timeframe_picker %} = 'Date' THEN ${inventory_items.created_date}
+    WHEN {% parameter timeframe_picker %} = 'Week' THEN ${inventory_items.created_week}
+    WHEN{% parameter timeframe_picker %} = 'Month' THEN ${inventory_items.created_month}
+    END ;;
+  }
+
   dimension: product_id {
     type: number
     # hidden: yes
