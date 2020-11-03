@@ -65,7 +65,8 @@ measure: yes_no {
       week,
       month,
       quarter,
-      year
+      year,
+      fiscal_year
     ]
     sql:${TABLE}.created_at ;;
   }
@@ -88,7 +89,14 @@ measure: yes_no {
   dimension: gender {
     type: string
     sql: ${TABLE}.gender ;;
-  }
+      html: {% if age._value >30 %}
+              <p style="color: black; background-color: lightblue; font-size:100%; text-align:center">{{ rendered_value }}</p>
+            {% else %}
+              <p style="color: black; background-color: orange; font-size:100%; text-align:center">{{ rendered_value }}</p>
+            {% endif %}
+        ;;
+
+    }
 
   dimension: last_name {
     type: string
@@ -105,7 +113,10 @@ measure: yes_no {
     type: zipcode
     sql: ${TABLE}.zip ;;
   }
-
+measure: gender_distinct {
+  type: count_distinct
+  sql: ${gender} ;;
+}
   measure: count {
     type: count
     drill_fields: [detail*]

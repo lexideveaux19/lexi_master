@@ -41,6 +41,7 @@ view: order_items {
 
   dimension: sale_price {
     type: number
+    value_format_name: usd
     sql: ${TABLE}.sale_price ;;
   }
 
@@ -54,5 +55,6 @@ view: order_items {
   measure: count {
     type: count
     drill_fields: [id, orders.id, inventory_items.id]
+    value_format_name: usd
   }
 }

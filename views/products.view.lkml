@@ -9,16 +9,14 @@ view: products {
   }
 
   dimension: brand {
-    group_label: "Test"
-    group_item_label: "Bran"
-    label: "Test Bran"
     type: string
     sql: ${TABLE}.brand ;;
   }
-
+measure: brand_distinct {
+  type: count_distinct
+  sql: ${brand} ;;
+}
   dimension: category {
-    group_label: "Test"
-    group_item_label: "Cat"
     type: string
     sql: ${TABLE}.category ;;
     drill_fields: [rank]

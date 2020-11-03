@@ -18,7 +18,7 @@ persist_with: lexi_bug_testing_default_datagroup
   # }
 explore: ndt_test {}
 explore: sql_runner_query {}
-
+explore: currency {}
 explore: flights {}
 explore: test {}
 explore: companies {

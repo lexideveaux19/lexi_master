@@ -81,6 +81,11 @@ dimension: created_month {
     ]
     sql: ${TABLE}.created_at ;;
   }
+
+  dimension: fiscal_year {
+    type: string
+    sql: CAST(${created_fiscal_year} as CHAR) ;;
+  }
   dimension: time_of_day_number{
     type: number
     sql: cast(${created_time_of_day} as decimal(4,2)) ;;
@@ -107,6 +112,15 @@ dimension: created_month {
     }
   }
 
+  dimension: link_field {
+    label: "Link"
+    link: {
+      label: "Link to dashboard"
+      url: "/dashboards-next/4304?Status={{ _filters['orders.status'] }}&Category={{ _filters['products.category._value'] }}"
+    }
+    sql: 'dashboard';;
+  }
+
   dimension: created_one_day {
     type: date
     sql:DATE_ADD(${created_date}, INTERVAL 1 day);;
@@ -115,15 +129,14 @@ dimension: created_month {
   dimension: status_with_links {
     type: string
     sql: ${TABLE}.status ;;
-    html: {% if value == 'cancelled' %}
-    <div class="vis-single-value"  style="margin:0; padding:0; border-radius:0; color: black; background-color: lightblue; text-align:center">{{ rendered_value }}</div>
-    {% elsif value == 'complete' %}
-    <div style="color: black; background-color: lightgreen; font-size:100%; text-align:center">{{ rendered_value }}</div>
-    {% else %}
-    <div style="color: black; background-color: orange; font-size:100%; text-align:center">{{ rendered_value }}</div>
-    {% endif %}
-    ;;
-
+    # html: {% if value == 'cancelled' %}
+    # <div class="vis-single-value"  style="margin:0; padding:0; border-radius:0; color: black; background-color: lightblue; text-align:center">{{ rendered_value }}</div>
+    # {% elsif value == 'complete' %}
+    # <div style="color: black; background-color: lightgreen; font-size:100%; text-align:center">{{ rendered_value }}</div>
+    # {% else %}
+    # <div style="color: black; background-color: orange; font-size:100%; text-align:center">{{ rendered_value }}</div>
+    # {% endif %}
+    # ;;
     link: {
       label: "Drill Dashboard"
       url: "/dashboards-next/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"
