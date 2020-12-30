@@ -44,6 +44,18 @@ measure: yes_no {
     style:  integer
     sql: ${age} ;;
   }
+measure: age_num {
+  type: number
+  sql: ${age} ;;
+}
+  measure: age_max {
+    type: max
+    sql: ${age} ;;
+  }
+  measure: age_sum {
+    type: sum
+    sql: ${age} ;;
+  }
 
   dimension: city {
     type: string
@@ -80,7 +92,7 @@ measure: yes_no {
   }
 
   dimension: first_name {
-    type: string
+      type: string
     sql: ${TABLE}.first_name ;;
     # label: "{% if orders._in_query %} orders first name
     # {% else %} reg first name {% endif %}"
@@ -122,6 +134,14 @@ measure: gender_distinct {
     drill_fields: [detail*]
   }
 
+  measure:count_first_name{
+    type: count_distinct
+    sql: ${first_name} ;;
+  }
+  measure: count_distinct {
+    type: count_distinct
+    sql: concat(${first_name},${last_name}) ;;
+}
 
   # ----- Sets of fields for drilling ------
   set: detail {

@@ -1,5 +1,10 @@
 connection: "thelook"
-# #test for derived one date filter for multiple explores
+include: "/views/**/*.view"
+
+explore: order_items {}
+
+explore: users {}
+#test for derived one date filter for multiple explores
 # include: "/views/orders.view"
 # explore: test_a {
 #   hidden: yes # IMPORTANT - keep explores hidden to avoid clutter

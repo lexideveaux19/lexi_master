@@ -64,7 +64,10 @@ view: inventory_items {
     ]
     sql: ${TABLE}.sold_at ;;
   }
-
+measure: count_test {
+  type: number
+  sql: count(${id}) ;;
+}
   measure: count {
     type: count
     drill_fields: [id, products.id, products.item_name, order_items.count]

@@ -1,4 +1,5 @@
 view: orders {
+
   sql_table_name: demo_db.orders ;;
   drill_fields: [id]
 
@@ -19,7 +20,7 @@ intervals: [hour]
 dimension: duration_8 {
   label: "business day hours"
   sql:  concat(round((${hours_duration}/24)*8,1), " hours") ;;
-  value_format: "string"
+  # value_format: "string"
 }
 
 measure: count_month {
@@ -74,13 +75,16 @@ dimension: created_month {
       week,
       quarter,
       fiscal_year,
+      day_of_month,
       day_of_week,
       time_of_day,
+      hour_of_day,
       year,
       month_name
     ]
     sql: ${TABLE}.created_at ;;
   }
+
 
   dimension: fiscal_year {
     type: string
@@ -143,16 +147,61 @@ dimension: created_month {
     }
     link: {
       label: "Drill Explore"
-      url:"/explore/lexi_bug_testing/order_items?fields=orders.status,users.age&f[orders.status]={{ value }}&f[orders.created_date]={{ _filters['orders.created_date'] | url_encode }}"
+      url:"/explore/lexi_bug_testing/order_items?fields=orders.status_with_links,users.age&f[orders.status_with_links]={{ value }}&f[orders.created_date]={{ _filters['orders.created_date'] | url_encode }}"
+    }
+    link: {
+      label:"external dash"
+      url: "https://master.dev.looker.com/dashboards/4303"
+    }
+    link: {
+      label: "pivoted drill"
+      url: "/explore/lexi_bug_testing/order_items?fields=orders.status_with_links,orders.count,orders.created_month_name&pivots=orders.status_with_links&fill_fields=orders.created_month_name&f[orders.status_with_links]={{ value }}&sorts=orders.status_with_links,orders.count+desc+0&limit=500&query_timezone=America%2FLos_Angeles&vis=%7B%7D&filter_config=%7B%22orders.status_with_links%22%3A%5B%7B%22type%22%3A%22%3D%22%2C%22values%22%3A%5B%7B%22constant%22%3A%22cancelled%22%7D%2C%7B%7D%5D%2C%22id%22%3A0%2C%22error%22%3Afalse%7D%5D%7D&origin=share-expanded"
     }
     # html:
     # <a href="/dashboards/4304?Status={{ value }}&Category={{ products.category._value }}&Date={{ _filters['orders.created_date'] | url_encode }}"</a> ;;
   }
-
   dimension: status{
-  type:string
-  sql:${TABLE}.status;;
-}
+    description: "this is my description"
+    type:string
+    sql:${TABLE}.status;;
+      html:{% if value == 'cancelled' %}
+      <p style="color: black; background-color: lightblue; font-size:100%; text-align:center">{{ rendered_value }}</p>
+    {% elsif value == 'pending' %}
+      <p style="color: black; background-color: lightgreen; font-size:100%; text-align:center">{{ rendered_value }}</p>
+    {% else %}
+      <p style="color: black; background-color: orange; font-size:100%; text-align:center">{{ rendered_value }}</p>
+    {% endif %}
+    ;;
+
+  }
+
+dimension: cancelled {
+    type: yesno
+    sql: ${status}='cancelled';;
+  }
+  measure: count_cancelled {
+    type: count
+    filters: [cancelled: "yes"]
+  }
+
+  dimension: status_sort {
+  type: string
+      case: {
+        when: {
+          sql: ${status} = "complete" ;;
+          label: "complete"
+        }
+        when: {
+          sql: ${status} = "cancelled" ;;
+          label: "cancelled"
+        }
+        when: {
+          sql: ${status} = "pending" ;;
+          label: "pending"
+        }
+      }
+    }
+
 
   dimension: user_id {
     type: number
@@ -160,20 +209,15 @@ dimension: created_month {
     sql: ${TABLE}.user_id ;;
   }
 
-  measure: count {
+  measure: count_with_links {
     type: count
-    # filters: [status: "-NULL"]
-    label: "{% if orders.status._in_query %} Status Count {% else %} Regular Count {% endif %}"
-    # label: "status count"
     link: {
-      label: "drill count"
-      url: "{{link}}"
+      url:"/explore/lexi_bug_testing/order_items?fields=orders.count&f[orders.status]={{ orders.status._value }}&limit=500&column_limit=50&vis=%7B%7D&filter_config=%7B%22orders.status%22%3A%5B%7B%22type%22%3A%22%3D%22%2C%22values%22%3A%5B%7B%22constant%22%3A%22%22%7D%2C%7B%7D%5D%2C%22id%22%3A2%7D%5D%7D&origin=share-expanded"
     }
-    link: {
-      label: "Drill Dashboard"
-      url: "/dashboards/4304"
     }
-    drill_fields: [drill_test*]
+    measure: count {
+      type: count
+         # drill_fields: [drill_test*]
   }
 set: drill_test {
   fields: [id, users.last_name, users.id, users.first_name, order_items.count]

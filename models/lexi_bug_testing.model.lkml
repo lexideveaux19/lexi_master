@@ -3,8 +3,10 @@ connection: "thelook"
 # include all the views
 include: "/views/**/*.view"
 include: "/dashboards/*.dashboard.lookml"
+include: "/users_sqldt.view"
+
 datagroup: lexi_bug_testing_default_datagroup {
-  # sql_trigger: SELECT MAX(id) FROM etl_log;;
+  sql_trigger: SELECT MAX(id) FROM etl_log;;
   max_cache_age: "1 hour"
 }
 
@@ -25,19 +27,19 @@ explore: companies {
   sql_always_where: ${companies.founded_date} >= '2007-01-01'  ;;
 }
 
-explore: order_items_liquid_2 {
-  view_name: order_items
-  join: orders {
-    relationship: many_to_one
-    sql_on:
-    {% if _user_attributes['lex_dynamic_sql']=="Yes" %}
-      ${orders.id} = ${order_items.order_id}
-      {% else %}
-      ${orders.created_raw} = ${order_items.returned_raw}
-      {% endif %}
-       ;;
-  }
-}
+# explore: order_items_liquid_2 {
+#   view_name: order_items
+#   join: orders {
+#     relationship: many_to_one
+#     sql_on:
+#     {% if _user_attributes['lex_dynamic_sql']=="Yes" %}
+#       ${orders.id} = ${order_items.order_id}
+#       {% else %}
+#       ${orders.created_raw} = ${order_items.returned_raw}
+#       {% endif %}
+#       ;;
+#   }
+# }
 
 explore: events {
   # hidden: yes
@@ -74,10 +76,10 @@ explore: inventory_items {
 #     relationship: many_to_one
 #   }
 # }
+explore: testingage {}
 explore: order_items {
-  # always_filter: {
-  #   filters: [orders.status: "-cancelled"]
-  # }
+  # sql_always_where: ${dynamic_timeframe}=1 ;;
+description: "this is my description"
   join: orders {
     type: left_outer
     sql_on: ${order_items.order_id} = ${orders.id} ;;
