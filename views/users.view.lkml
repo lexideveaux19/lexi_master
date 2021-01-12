@@ -2,6 +2,10 @@ view: users {
   sql_table_name: demo_db.users ;;
   drill_fields: [id]
 
+  parameter: test_param {
+    type: unquoted
+  }
+
   dimension: id {
     primary_key: yes
     type: number
@@ -58,6 +62,7 @@ measure: age_num {
   }
 
   dimension: city {
+  label: "{{ users.country._value }}"
     type: string
     sql: ${TABLE}.city ;;
   }
@@ -119,6 +124,8 @@ measure: age_num {
   dimension: state {
     type: string
     sql: ${TABLE}.state ;;
+    # label: "{{ users.last_name._value }}"
+
   }
 
   dimension: zip {

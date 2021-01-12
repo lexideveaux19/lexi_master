@@ -11,6 +11,7 @@ view: products {
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;
+    html: <p><span style="white-space:pre-wrap;">{{ rendered_value }}</span></p>;;
   }
 measure: brand_distinct {
   type: count_distinct

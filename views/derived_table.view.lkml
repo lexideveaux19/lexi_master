@@ -9,6 +9,8 @@ view: derived_table {
 
        WHERE  {% condition state_filter %} users.state {% endcondition %} AND
         {% condition my_date_filter %}  DATE(users.created_at ) {% endcondition %}
+        AND {% condition users_state %} users.state {% endcondition %}
+
 
       GROUP BY 1,2
       ORDER BY DATE(users.created_at ) DESC
