@@ -1,20 +1,23 @@
 view: derived_table {
   derived_table: {
-    sql: SELECT
-        users.state  AS `users.state`,
-        DATE(users.created_at ) AS `users.created_date`
-      FROM demo_db.order_items  AS order_items
-      LEFT JOIN demo_db.orders  AS orders ON order_items.order_id = orders.id
-      LEFT JOIN demo_db.users  AS users ON orders.user_id = users.id
+    sql:SELECT
+          `users`.`state` AS `users.state`,
+              (DATE(CONVERT_TZ(`users`.`created_at`,'UTC','America/Los_Angeles'))) AS `users.created_date`
+      FROM
+          `demo_db`.`order_items` AS `order_items`
+          LEFT JOIN `demo_db`.`orders` AS `orders` ON `order_items`.`order_id` = `orders`.`id`
+          LEFT JOIN `demo_db`.`users` AS `users` ON `orders`.`user_id` = `users`.`id`
 
-       WHERE  {% condition state_filter %} users.state {% endcondition %} AND
-        {% condition my_date_filter %}  DATE(users.created_at ) {% endcondition %}
-        AND {% condition users_state %} users.state {% endcondition %}
-
-
-      GROUP BY 1,2
-      ORDER BY DATE(users.created_at ) DESC
+          WHERE  {% condition state_filter %} users.state {% endcondition %}
+         AND {% condition my_date_filter %} (DATE(CONVERT_TZ(`users`.`created_at`,'UTC','America/Los_Angeles'))) {% endcondition %}
+      GROUP BY
+          1,
+          2
+      ORDER BY
+         (DATE(CONVERT_TZ(`users`.`created_at`,'UTC','America/Los_Angeles'))) DESC
       LIMIT 500
+
+
        ;;
   }
 
@@ -26,6 +29,12 @@ view: derived_table {
 filter: my_date_filter {
   type: date
   suggest_dimension: users_created_date
+  }
+
+
+  dimension: users_created_date {
+    type: date
+    sql: ${TABLE}.`users.created_date` ;;
   }
 
 filter: state_filter {
@@ -56,10 +65,6 @@ dimension: dynamic_date {
   ;;
 }
 
-  dimension: users_created_date {
-    type: date
-    sql: ${TABLE}.`users.created_date` ;;
-  }
 
   set: detail {
     fields: [users_state, users_created_date]

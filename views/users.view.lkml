@@ -1,4 +1,5 @@
 view: users {
+
   sql_table_name: demo_db.users ;;
   drill_fields: [id]
 
@@ -28,19 +29,22 @@ measure: yes_no {
   type: number
   sql: case when ${gender}="m" and ${count}>700 then 1 else 0 end  ;;
 }
-
+filter: age_filter {
+  type: number
+  sql:  {% condition age_filter %} ${age} {% endcondition %};;
+}
   dimension: age {
     type: number
     # label: "hours"
     sql: ${TABLE}.age ;;
-    html:
-    {% if value >0 and value <20 %}
-    <p style="color: red; font-size: 80%">{{ rendered_value }}</p>
-    {% elsif value >1000 %}
-    <p style="color: blue; font-size:80%">{{ rendered_value }}</p>
-    {% else %}
-    <p style="color: black; font-size:100%">{{ rendered_value }}</p>
-    {% endif %};;
+    # html:
+    # {% if value >0 and value <20 %}
+    # <p style="color: red; font-size: 80%">{{ rendered_value }}</p>
+    # {% elsif value >1000 %}
+    # <p style="color: blue; font-size:80%">{{ rendered_value }}</p>
+    # {% else %}
+    # <p style="color: black; font-size:100%">{{ rendered_value }}</p>
+    # {% endif %};;
   }
   dimension: age_tier {
     type: tier
@@ -52,13 +56,28 @@ measure: age_num {
   type: number
   sql: ${age} ;;
 }
+
+measure: age_min {
+  type: min
+  sql: ${age} ;;
+}
+
+measure: age_median {
+  type: median
+  sql: ${age} ;;
+}
   measure: age_max {
     type: max
     sql: ${age} ;;
   }
-  measure: age_sum {
+  measure: age_sum_distinct {
     type: sum
+    sql_distinct_key: ${id} ;;
     sql: ${age} ;;
+  }
+  measure: age_sum_distinct_test {
+    type: number
+    sql: sum(distinct ${age}) ;;
   }
 
   dimension: city {

@@ -85,6 +85,18 @@ dimension: created_month {
     sql: ${TABLE}.created_at ;;
   }
 
+dimension: created_convert {
+  type: date
+  convert_tz: no
+  sql:CONVERT_TZ(${TABLE}.created_at ,'America/Los_Angeles','UTC');;
+}
+
+
+dimension: week_end {
+  type: date
+  sql: DATE_ADD(${created_week}, INTERVAL 6 DAY);
+ ;;
+}
 
   dimension: fiscal_year {
     type: string
@@ -203,6 +215,32 @@ dimension: cancelled {
     }
 
 
+  dimension: rating_icon {
+    label: "rating icon🌟"
+    type: string
+    sql: ${status} ;;
+    html:
+      {% if status._value == "complete" %}     <p style="text-align: left"><img src="https://jds-explore.com/wp-content/uploads/2021/02/Star1-e1613746198162.png"></p>
+      {% elsif status._value == "pending" %}  <p style="text-align: left"><img src="https://jds-explore.com/wp-content/uploads/2021/02/Star2-e1613746181409.png"></p>
+      {% elsif status._value == "cancelled" %}  <p style="text-align: left"><img src="https://jds-explore.com/wp-content/uploads/2021/02/Star3-e1613746160773.png"></p>
+      {% endif %} ;;
+  }
+
+dimension: new {
+  type: string
+  sql:
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M34.7222 8.22255C32.2044 7.55056 29.7447 6.67738 27.3667 5.61144C25.0272 4.59656 22.7687 3.4042 20.6111 2.04477L20 1.66699L19.4 2.05588C17.2424 3.41531 14.984 4.60768 12.6445 5.62255C10.2626 6.68526 7.79907 7.55473 5.27779 8.22255L4.44446 8.43366V17.7003C4.44446 32.5781 19.4778 38.1448 19.6222 38.2003L20 38.3337L20.3778 38.2003C20.5333 38.2003 35.5556 32.5892 35.5556 17.7003V8.43366L34.7222 8.22255ZM33.3334 17.7003C33.3334 29.9225 22.2222 35.0448 20 35.9559C17.7778 35.0448 6.66668 29.9114 6.66668 17.7003V10.1559C9.01054 9.48206 11.3049 8.64673 13.5333 7.65588C15.7619 6.69254 17.9225 5.57886 20 4.32255C22.0776 5.57886 24.2381 6.69254 26.4667 7.65588C28.6951 8.64673 30.9895 9.48206 33.3334 10.1559V17.7003Z" fill="#469F3D"/>
+<path d="M12.089 18.744C11.8764 18.562 11.603 18.4669 11.3234 18.4777C11.0437 18.4885 10.7784 18.6044 10.5806 18.8023C10.3827 19.0002 10.2668 19.2654 10.256 19.5451C10.2452 19.8247 10.3403 20.0981 10.5223 20.3107L17.189 26.9773L29.3334 15.2996C29.5456 15.0933 29.6671 14.8112 29.6713 14.5153C29.6755 14.2194 29.5619 13.934 29.3556 13.7218C29.1494 13.5096 28.8672 13.3881 28.5713 13.3839C28.2755 13.3797 27.99 13.4933 27.7779 13.6996L17.2556 23.9107L12.089 18.744Z" fill="#469F3D"/>
+</svg> <font color="#469F3D" size = "4"> <b>You are protected.</b> </font><font color="#469F3D" size = "4">Enhanced Perimeter Security is actively monitoring your site.</font>;;
+}
+ dimension: looker_image {
+  type: string
+  sql: ${status};;
+  html: <img src="http://www.onlinewebfonts.com" /> ;;
+}
+
+
   dimension: user_id {
     type: number
     # hidden: yes
@@ -218,6 +256,11 @@ dimension: cancelled {
     measure: count {
       type: count
          # drill_fields: [drill_test*]
+  }
+
+  measure: testing_percent {
+    type: number
+    sql: ${count}/${users.count} ;;
   }
 set: drill_test {
   fields: [id, users.last_name, users.id, users.first_name, order_items.count]

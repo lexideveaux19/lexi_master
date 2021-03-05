@@ -1,5 +1,6 @@
 connection: "thelook"
 include: "/views/**/*.view"
+include: "/dashboards/*.dashboard"
 
 explore: order_items {}
 

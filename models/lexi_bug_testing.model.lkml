@@ -2,7 +2,7 @@ connection: "thelook"
 
 # include all the views
 include: "/views/**/*.view"
-include: "/dashboards/*.dashboard.lookml"
+include: "/dashboards/*.dashboard"
 include: "/users_sqldt.view"
 
 datagroup: lexi_bug_testing_default_datagroup {
@@ -52,13 +52,14 @@ explore: events {
 
 explore: derived_table {}
 
-explore: inventory_items {
-  join: products {
-    type: left_outer
-    sql_on: ${inventory_items.product_id} = ${products.id} ;;
-    relationship: many_to_one
-  }
-}
+
+# explore: inventory_items {
+#   join: products {
+#     type: left_outer
+#     sql_on: ${inventory_items.product_id} = ${products.id} ;;
+#     relationship: many_to_one
+#   }
+# }
 # explore: order_items_2{
 #   from: order_items
 #   join: orders {
@@ -76,9 +77,9 @@ explore: inventory_items {
 #     relationship: many_to_one
 #   }
 # }
+
 explore: testingage {}
 explore: order_items {
-  # sql_always_where: ${dynamic_timeframe}=1 ;;
 description: "this is my description"
   join: orders {
     type: left_outer
