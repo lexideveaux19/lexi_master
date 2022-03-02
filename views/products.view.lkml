@@ -7,7 +7,11 @@ view: products {
     type: number
     sql: ${TABLE}.id ;;
   }
-
+  dimension: brand_search {
+    type: string
+    sql: ${TABLE}.brand ;;
+    html: <a href="https://www.google.com/search?q={{ value }}"><button>{{ value }}</button></a> ;;
+  }
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;

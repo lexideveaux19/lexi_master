@@ -25,10 +25,7 @@ view: users {
   }
 
 
-measure: yes_no {
-  type: number
-  sql: case when ${gender}="m" and ${count}>700 then 1 else 0 end  ;;
-}
+
 filter: age_filter {
   type: number
   sql:  {% condition age_filter %} ${age} {% endcondition %};;
@@ -46,6 +43,11 @@ filter: age_filter {
     # <p style="color: black; font-size:100%">{{ rendered_value }}</p>
     # {% endif %};;
   }
+measure: agg_age {
+  type: number
+  sql: (${age}/(${age}*3)-1) ;;
+}
+
   dimension: age_tier {
     type: tier
     tiers: [20, 30, 40, 50, 60, 70, 80]
@@ -70,9 +72,29 @@ measure: age_median {
     type: max
     sql: ${age} ;;
   }
+
+  measure: age_sum{
+    type: sum
+    sql: ${age};;
+  }
+
+  measure: avg_wait_time {
+    value_format: "mm:ss"
+    type: average_distinct
+    sql_distinct_key: ${id};;
+    sql: ${age}/86400.0 ;;
+  }
+
   measure: age_sum_distinct {
     type: sum
     sql_distinct_key: ${id} ;;
+    sql: ${age} ;;
+  }
+
+  measure: age_avg_distinct {
+    type: average_distinct
+    sql_distinct_key: ${id} ;;
+    # filters: [orders.status: "Cancelled"]
     sql: ${age} ;;
   }
   measure: age_sum_distinct_test {
@@ -106,8 +128,31 @@ measure: age_median {
     ]
     sql:${TABLE}.created_at ;;
   }
+  dimension: year_lexi_users {
+    type: date_year
+    sql:${TABLE}.created_at;;
+  }
 
-
+  # parameter: main_metric_selector {
+  #   type: unquoted
+  #   allowed_value: {
+  #     label: "Total Revenue"
+  #     value: "total_revenue"
+  #   }
+  #   allowed_value: {
+  #     label: "Total Users"
+  #     value: "total_users"
+  #   }
+  # }
+  # measure: dynamic_measure {
+  #   label_from_parameter: main_metric_selector
+  #   sql:
+  #   {% if main_metric_selector._parameter_value == 'total_revenue' %}
+  #     ${age_max} AND ${age_median}
+  #   {% else %}
+  #     ${total_users}
+  #   {% endif %};;
+  # }
 
   dimension: email {
     type: string
@@ -143,6 +188,7 @@ measure: age_median {
   dimension: state {
     type: string
     sql: ${TABLE}.state ;;
+    map_layer_name: us_states
     # label: "{{ users.last_name._value }}"
 
   }
@@ -155,9 +201,19 @@ measure: gender_distinct {
   type: count_distinct
   sql: ${gender} ;;
 }
+
   measure: count {
     type: count
-    drill_fields: [detail*]
+    value_format_name: decimal_0
+    drill_fields: [id, city, gender]
+  }
+
+  measure: count_with_state {
+    type: count
+    value_format_name: decimal_0
+    drill_fields: [id, city, gender]
+    html: Count <br> {{ rendered_value }} <br> State <br> {{ state._rendered_value }} ;;  ## here we use || to concatenate the values
+
   }
 
   measure:count_first_name{
@@ -168,6 +224,49 @@ measure: gender_distinct {
     type: count_distinct
     sql: concat(${first_name},${last_name}) ;;
 }
+
+
+# dimension_group: dynamic_date {
+#   type: time
+# sql: {% if gender_distinct._in_query %}
+#   ${created_raw}
+# {% else %}
+#   ${order_items.returned_raw}
+# {% endif %}
+# ;;
+# }
+
+  dimension:link {
+    type: string
+    sql: "https://google.com" ;;
+    link: {
+      label: "{{ value }}"
+      url: "{{ value }}"
+    }
+  }
+
+  dimension:linkhtml {
+    type: string
+    sql: "https://google.com" ;;
+    html:<a href="{{ value }}">{{ value }}</a>
+;;
+  }
+
+  dimension: state_html {
+    type: string
+    sql: ${TABLE}.state ;;
+    html: <a href="https://www.google.com/search?q={{ value }}">{{ value }}</a> ;;
+  }
+
+  dimension: state_link {
+    type: string
+    sql: ${TABLE}.state ;;
+    link: {
+      label: "Search {{ value }} state"
+      url: "https://www.google.com/search?q={{ value }}"
+    }
+  }
+
 
   # ----- Sets of fields for drilling ------
   set: detail {

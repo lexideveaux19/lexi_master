@@ -2,7 +2,13 @@ connection: "thelook"
 include: "/views/**/*.view"
 include: "/dashboards/*.dashboard"
 
-explore: order_items {}
+explore: order_items {
+  join: orders {
+    type: left_outer
+    sql_on: ${order_items.order_id} = ${orders.id} ;;
+    relationship: many_to_one
+  }
+}
 
 explore: users {}
 #test for derived one date filter for multiple explores

@@ -27,6 +27,19 @@ view: order_items {
     sql: ${TABLE}.order_id ;;
 
   }
+  dimension_group: delivered_null {
+    type: time
+    timeframes: [
+      date
+    ]
+    sql:CASE WHEN ${TABLE}.delivered_at IS NULL then "" ELSE ${TABLE}.delivered_at END;;
+  }
+  dimension: history_button {
+    sql: ${TABLE}.id ;;
+    html: <a href=
+        "/explore/lexi_bug_testing/order_items?fields=order_items.order_id,order_items.count,order_items.created_date,inventory_items.product_id,inventory_items.cost&f[users.id]={{ value }}"
+        ><button>Order History</button></a>;;
+  }
 
   dimension_group: returned {
     type: time
@@ -38,10 +51,24 @@ view: order_items {
       month,
       quarter,
       year,
-      hour_of_day
+      hour_of_day,
+      month_name
     ]
+    # drill_fields: [returned_date]
     sql: ${TABLE}.returned_at ;;
   }
+
+  dimension: year_number {
+    type: number
+    sql: ${returned_year}  ;;
+  }
+
+  measure: max_return {
+    type: date
+    sql: max(${returned_raw}) ;;
+    convert_tz: no
+  }
+
 
   parameter: year {
     type: string
@@ -81,6 +108,24 @@ view: order_items {
 
   }
 
+  measure : sum_sales_price {
+    type:  sum
+    sql:  ${sale_price} ;;
+    value_format_name: usd
+  }
+
+  measure: sale_formatted {
+    type: sum
+    sql: ${sale_price} ;;
+    html:
+       {% if value > 100 %}
+         <p style="color: red; font-size: 50%">{{ rendered_value }}</p>
+       {% elsif value >1000 %}
+         <p style="color: blue; font-size:80%">{{ rendered_value }}</p>
+       {% else %}
+         <p style="color: black; font-size:100%">{{ rendered_value }}</p>
+       {% endif %};;
+  }
 
 
   measure: avg_sale {
@@ -92,7 +137,6 @@ view: order_items {
   measure: sum_sale {
     type: sum
     sql: (${sale_price}*3)-${sale_price};;
-    value_format_name: usd_0
     filters: [date_filter: "2018-05-18 12:00:00 to
       2018-05-18 14:00:00 "]
   }
@@ -101,6 +145,5 @@ view: order_items {
   measure: count {
     type: count
     drill_fields: [id, orders.id, inventory_items.id]
-    value_format_name: usd
   }
 }

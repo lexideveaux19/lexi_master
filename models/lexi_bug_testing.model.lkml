@@ -4,6 +4,8 @@ connection: "thelook"
 include: "/views/**/*.view"
 include: "/dashboards/*.dashboard"
 include: "/users_sqldt.view"
+# include: "/testing.dashboard"
+include: "/dashboards/lookmldash.dashboard"
 
 datagroup: lexi_bug_testing_default_datagroup {
   sql_trigger: SELECT MAX(id) FROM etl_log;;
@@ -41,16 +43,16 @@ explore: companies {
 #   }
 # }
 
-explore: events {
-  # hidden: yes
-  join: users {
-    type: left_outer
-    sql_on: ${events.user_id} = ${users.id} ;;
-    relationship: many_to_one
-  }
-}
+# explore: events {
+#   # hidden: yes
+#   join: users {
+#     type: left_outer
+#     sql_on: ${events.user_id} = ${users.id} ;;
+#     relationship: many_to_one
+#   }
+# }
 
-explore: derived_table {}
+# explore: derived_table {}
 
 
 # explore: inventory_items {
@@ -80,6 +82,7 @@ explore: derived_table {}
 
 explore: testingage {}
 explore: order_items {
+  # always_filter: {filters:[orders.status:"cancelled"]}
 description: "this is my description"
   join: orders {
     type: left_outer
@@ -107,6 +110,18 @@ description: "this is my description"
   }
 }
 
+explore: lexi_test {
+  from: flights
+}
+
+explore: status_not_cancelled {
+  # join: orders {
+  #   type: inner
+  #   sql_on: ${orders.user_id} = ${status_not_cancelled.users_id} ;;
+  #   relationship: many_to_one
+
+  # }
+}
 
 
   explore: users_sqldt{}
